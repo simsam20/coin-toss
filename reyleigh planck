@@ -1,0 +1,127 @@
+import math
+import numpy as np
+import matplotlib.pyplot as plt
+ # a) Reyleigh jeans
+def DOS(x):
+    G = math.pi*x**2
+    return G
+x= np.linspace(0,12,151)
+G=[]
+for i in  x :
+    G.append(DOS(i))
+    
+plt.scatter(x,G,marker='.')
+plt.xlabel('x')
+plt.ylabel('G(x)')
+plt.title('Density of states(reyleigh)')
+plt.grid()
+plt.show()
+
+
+kb =1.38*10**(-23)
+c= 3*10**8
+h = 6.626 *(10**(-34))
+T = 1200
+epsilon = kb*T
+#reyleigh
+def reyleigh(x, T):
+    epsilon = kb*T
+    
+    U_rj = (8*(np.pi)*((epsilon)**4)*(x**2))/((h*c)**3)
+
+    return U_rj
+
+x= np.linspace(0,12,50)
+U=[]
+for i in x:
+    U.append(reyleigh(i, 1200))
+    
+
+plt.scatter(x,U,marker='.',c='r')
+plt.xlabel('x')
+plt.ylabel('U(x)')
+plt.title(' energy')
+plt.grid()
+plt.show()
+#plank   
+def planck(x):
+    U_pl =(8*(np.pi)*((epsilon)**4)*(x**3))/(((h*c)**3)*((np.exp(x))-1))
+    return U_pl
+    U_pl = (8*(np.pi)*((epsilon)**4)*(x**3))/(((h*c)**3)*((np.exp(x))-1))
+
+    return U_pl
+
+x = np.linspace(0,12,50)
+UP = []
+for i in x:
+    UP.append(planck(i))
+plt.scatter(x,UP,marker='.')
+plt.xlabel('x')
+plt.ylabel('U(x)')
+plt.title('planck')
+plt.grid()
+plt.plot(x,UP)
+plt.show()    
+# Dimensional
+l_0 = 10**(-10)
+def GV(v):
+    G1 = np.pi*(2*l_0/c)**2*v**2
+    return G1
+v = np.linspace(10**10,10**30,50)
+x = []
+
+for i in v:
+    x.append(GV(i))
+    
+plt.plot(v,x)
+plt.grid()
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel('v')
+plt.ylabel('G(v)')
+plt.show()
+
+
+x = np.linspace(0.01,12,1000)
+
+f_rj = x**2
+T_arr = [1200,1500,1800]
+plt.figure(figsize = (10,7))
+
+for T in T_arr:
+    e_ = kb*T
+    nu_ = e_/h
+    l_ = h*c/e_
+    
+    nu= nu_*x
+    u_rj = 8*np.pi*e_*f_rj/(l_**3*nu_*epsilon)
+    
+    plt.plot(nu,u_rj,label= f'T ={T}K' )
+    
+plt.xlabel('v')
+plt.ylabel('U(v)')
+plt.legend()
+plt.grid()
+plt.title('REYLEIGH JEANS LAW ENERGY OF STATES')
+plt.show()
+f_p = x**3/(np.exp(x)-1)
+T_arr = [1200,1500,1800]
+plt.figure(figsize = (10,7))
+
+for T in T_arr:
+    e_ = kb*T
+    nu_ = e_/h
+    l_ = h*c/e_
+    
+    nu= nu_*x
+    u_rj = 8*np.pi*e_*f_p/(l_**3*nu_*epsilon)
+  
+    
+    plt.plot(nu,u_rj,label= f'T = {T}K' )
+    
+plt.xlabel('v')
+plt.ylabel('U(v)')
+plt.legend()
+plt.grid()
+plt.title('PLANCKS RADIATION LAW')
+plt.show()
