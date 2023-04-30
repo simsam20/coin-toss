@@ -1,0 +1,118 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math 
+def plot(x,y,a):
+    plt.plot(x,y)
+    plt.scatter(x,y)
+    plt.xlabel(a[0])
+    plt.ylabel(a[1])
+    plt.title(a[2])
+    plt.grid()
+    plt.show()
+def mb(x):
+    k=np.exp(-x)
+    return k
+x=np.linspace(-5,5,100)
+p1=mb(x)
+a=["e/KT","f_MB","Maxwell Distribution Function"]
+plot(x,p1,a)
+
+def en(t):
+    k = 1.38*10**(-23)
+    e = 1.6*10**(-19)
+    p1 = (k*t)/e
+    p11 = []
+    x_1 = np.linspace(-5,5,100)
+    for i in range(len(x_1)):
+        p11.append(x_1[i]*p1)
+    p11=np.array(p11)
+    return p11
+l1=[]
+tt=[100,200,500]
+
+for i in tt:
+    p1=en(i)
+    l1.append(p1)
+e = 1.6*10**(-19)
+kb = 1.38*10**(-23)
+#print(l1[0])
+#print(l1[0][0]*e/(kb*tt[0]))
+pp1=mb((l1[0]*e)/(kb*tt[0]))
+pp2=mb((l1[1]*e)/(kb*tt[1]))
+pp3=mb((l1[2]*e)/(kb*tt[2]))
+plt.plot(l1[0],pp1)
+plt.plot(l1[1],pp2)
+plt.plot(l1[2],pp3)
+plt.grid()
+plt.legend(tt)
+plt.ylabel("F(E)")
+plt.xlabel("E")
+plt.show()
+#-------------------------------------------------------------------------------------3
+def be(x,al=0):
+    p1=1/((np.exp(al)*(np.exp(x)))-1)
+    return p1
+x=np.linspace(-10,10,100)
+p2=be(x,-1)
+pppp=p2
+#print(p2)
+a=["e/KT","f_BE","Bose-Einstein Distribution Function"]
+plot(x,p2,a)
+pp1=be((l1[0]*e)/(kb*tt[0]))
+pp2=be((l1[1]*e)/(kb*tt[1]))
+pp3=be((l1[2]*e)/(kb*tt[2]))
+plt.plot(l1[0],pp1)
+plt.plot(l1[1],pp2)
+plt.plot(l1[2],pp3)
+plt.grid()
+plt.legend(tt)
+plt.ylabel("F(E)")
+plt.xlabel("E")
+plt.title("Bose-Einstein Distribution Function(with different temperatures)")
+plt.show()
+#--------------------------------------------------------------------------------------#
+def fd(al,x=0):
+    p1=1/((np.exp(al))*(np.exp(x))+1)
+    return p1
+x=np.linspace(-10,10,100)
+p2=fd(x,1)
+ppppp=p2
+#print(p2)
+a=["e/KT","f_BE","Fermi-Dirac Distribution Function"]
+plot(x,p2,a)
+pp1=fd((l1[0]*e)/(kb*tt[0]))
+pp2=fd((l1[1]*e)/(kb*tt[1]))
+pp3=fd((l1[2]*e)/(kb*tt[2]))
+plt.plot(l1[0],pp1)
+plt.plot(l1[1],pp2)
+plt.plot(l1[2],pp3)
+plt.grid()
+plt.legend(tt)
+plt.ylabel("F(E)")
+plt.xlabel("E")
+plt.title("Fermi-Dirac Distribution Function(with different temperatures)")
+plt.show()
+#----------------------------------------------------------------------------------------#
+def temp(x):
+    x=np.array(x)
+    e0 = 0.001
+    e = 1.6*10**(-19)
+    kb = 1.38*10**(-23)
+    theta = (e0*e)/kb
+    f1 = np.exp(-theta/x)
+#    print(len(f1))
+    f2 = 1/(np.exp(theta/x) + 1)
+    f3 = 1/((np.exp(theta/x)) - 1)
+    return f1,f2,f3
+t1=np.linspace(-1000, 1000,110)
+t2=np.linspace(0.5, 50,110)
+lll1=temp(t1)[0]
+lll2=temp(t2)[1]
+lll3=temp(t2)[2]
+a=["T","f_(T)","Maxwell Distribution Function"]
+plot(t1,lll1,a)
+a=["T","f_(T)","Fermi-Dirac Distribution Function"]
+plot(t2,lll2,a)
+a=["T","f_(T)","bose- einstein Distribution Function"]
+plot(t2,lll3,a)
+plt.show()
