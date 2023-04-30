@@ -1,0 +1,155 @@
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+from scipy.special import roots_laguerre,roots_hermite
+import scipy.integrate as si
+h=6.6260715*10**(-34)
+m=9.1093837 * 10**(-31)
+kb=1.3806452 * 10**(-23)
+n1,n2=10,10
+N=100
+def lag(f,n):
+    i=0
+    l,m=roots_laguerre(n)
+    for j in range(n):
+        i+=m[j]*(f(l[j]))
+    return i
+def gojo(n1,n2):
+    v=np.linspace(0.02,0.05,n1)
+    t=np.linspace(300,450,n2)
+    def z(V,T):
+        k=lambda x:((x)**2)*(np.pi)*0.5*np.exp(-((h**2)*(x**2))/(8*m*((V)**(2/3))*kb*T))
+        k=lambda x: (np.pi/2)*(x**2)*np.exp(-((h**2)*x**2/(8*m*((V)**(2/3))*kb*T)))
+        z1=si.quad(lambda x: (np.pi/2)*(x**2)*np.exp(-((h**2)*x**2/(8*m*((V)**(2/3))*kb*T))), 0, 10**(11))[0]
+        #z1=lag(k, 150)
+        return z1
+    u=np.zeros([n1,n2])
+    for i in range(n1):
+        for j in range(n2):
+            zk=z(v[i],t[j])
+            u[i,j]=zk
+    return u,v,t
+k,k1,k2=gojo(n1,n2)
+v1,v2=k1,k2
+v=k1
+k=np.log(k)
+k2=np.log(k2)
+k1=np.log(k1)
+def plot(k,k1,k2):
+    lk,ll=[],[]
+    p1,p2=[],[]
+    for i in range(len(k1)):
+        lk.append(k[:,i])
+        plt.plot(k1,k[:,i])
+        p1.append(k1[i])
+    plt.ylabel("ln(z)")
+    plt.xlabel("ln(V)")
+    plt.legend(p1)
+    plt.show()
+    for i in range(len(k2)):
+        lk.append(k[i,:])
+        plt.plot(k2,k[i,:])
+        p2.append(k2[i])
+    plt.ylabel("ln(z)")
+    plt.xlabel("ln(T)")
+    plt.legend(p2)
+    plt.show()
+plot(k,k1,k2)
+
+def p(k,vv1,k2,n2,N):
+    v1,z1=[],[]
+    for i in range(1,len(v)):
+        p1=vv1[i]-vv1[i-1]
+        v1.append(p1)
+    pp1,pp2=[],[]
+    for i in range(n2):
+        pp1.append(k[:,i])
+        pp2.append(k2[i]) 
+    for j in range(0,n2):
+        k1=pp1[j]
+        z1,z2=[],[]
+        for i in range(1,len(k1)):
+            z1.append(k1[i]-k1[i-1])
+        z1=np.array(z1)
+        #z1=z1*kb*pp2[j]
+        for i in range(len(z1)):
+            z2.append(z1[i]/v1[i])
+        z2=np.array(z2)
+        z2=N*z2*kb*pp2[j]
+        ppp1=[]
+        for i in range(1,len(k1)):
+            ppp1.append(vv1[i])
+        plt.plot(ppp1,z2)
+    plt.legend(pp2)
+    plt.xlabel("V")
+    plt.ylabel("P")
+    plt.title("P vs V (different temperatures")
+    plt.show()
+p(k,v1,v2,n2,N) 
+        
+def p(k,vv1,tt,n1,N):
+    tttt,zzzz=[],[]
+    v1,z1=[],[]
+    for i in range(1,len(v)):
+        p1=tt[i]-tt[i-1]
+        v1.append(p1)
+    pp1,pp2=[],[]
+    for i in range(n2):
+        pp1.append(k[i,:])
+        pp2.append(vv1[i]) 
+    for j in range(0,n1):
+        k1=pp1[j]
+        z1,z2=[],[]
+        for i in range(1,len(k1)):
+            z1.append(k1[i]-k1[i-1])
+        z1=np.array(z1)
+        #z1=z1*kb*pp2[j]
+        for i in range(len(z1)):
+            z2.append(z1[i]/v1[i])
+        z2=np.array(z2)
+        ppp1=[]
+        for i in range(1,len(k1)):
+            ppp1.append(tt[i])
+        ppp1=np.array(ppp1)
+        z2=kb*ppp1*ppp1*z2
+        zzzz.append(z2)
+        tttt.append(ppp1)
+        plt.plot(ppp1,z2)
+    plt.legend(pp2)
+    plt.xlabel("T")
+    plt.ylabel("<E>")
+    plt.title("<E> vs T (different volume)")
+    plt.show()
+    u=z2*N
+    return zzzz , tttt
+k1,k2=p(k,v1,v2,n2,N)
+for i in range(n1-1):
+
+    '''lm = LinearRegression()
+    lm.fit(l1, l2)
+    
+    print(lm.intercept_)
+    print(lm.coef_)
+    print(lm.slope_)'''
+    l1,l2=k1[i],k2[i]
+    kkk=k[0]         
+    l3=[]
+    for i in range(1,len(k)):
+        l3.append(kkk[i])
+    l3=np.array(l3) 
+    lnn=np.zeros(len(l1))
+    on=lnn 
+    
+    for i in range(len(l1)):
+        lnn[i]=np.log(N)
+        on[i]=1      
+    s=l1/l2 + kb*N*(l3-lnn+on)  
+    plt.plot(l2,s)  
+plt.title("S vs T")
+plt.xlabel("T")
+plt.ylabel("V")
+plt.show()
+        
+        
+        
+        
