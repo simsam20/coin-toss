@@ -1,0 +1,78 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.constants import h,N_A,Boltzmann,c
+from scipy.integrate import quad
+from scipy.stats import linregress
+
+def f_p(x):
+    F=[]
+    for i in range(len(x)):
+        y=(x[i]**3)/(np.exp(x[i])-1)
+        F.append(y)
+    return F
+
+    
+x=np.linspace(0.001,20,100)
+
+Y=f_p(x)
+
+plt.plot(x,Y)
+plt.ylabel('F_p')
+plt.xlabel('x')
+plt.grid()
+plt.show()
+
+for j in range(len(x)):
+    if Y[j]== max(Y):
+        x_p=x[j]
+print('Max value=',x_p)    
+
+b=h*c/(Boltzmann*x_p)
+print('b=',b)
+
+# Integral Constant
+def Int_constant(T):
+    e_star=Boltzmann*T
+    l_star=(h*c)/e_star
+    INT=(8*np.pi*e_star)/(l_star**3)
+    return INT
+
+# Solving Integral
+def f(x):
+    return x**3/(np.exp(x) - 1)
+   
+I_p = quad(f, 0 , np.inf)[0]
+print('inegral I_p is :' ,I_p )
+
+F=[]
+T =np.linspace(100,11000,200)
+for k in range(len(T)):
+    u=Int_constant(T[k])*I_p
+    flux=(c/4)*u
+    F.append(flux)
+    
+F =np.array(F)
+plt.plot(T,F)
+plt.ylabel('F')
+plt.xlabel('T')
+plt.grid()
+plt.title("F vs T" )
+plt.show()
+
+
+plt.plot(np.log(T),np.log(F),marker ='.')
+plt.ylabel('ln F')
+plt.xlabel('ln T')
+plt.xlim(-1,9)
+plt.ylim(-20,20)
+plt.grid()
+plt.title("ln F vs ln T" )
+plt.show()
+
+intercept = linregress(np.log(T),np.log(F))[1]
+stand = (c/4)*(8*(np.pi**5)*Boltzmann**4)/(15*(c**3)*(h**3))
+
+print('slope : ',linregress(np.log(T),np.log(F))[0])
+print('intercept : ', intercept)
+print("standard stefan boltzman constant: " ,stand)
+print("experimental stefan boltzman constant: " ,np.exp(intercept))
